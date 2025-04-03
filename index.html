@@ -2,77 +2,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Inversión</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <title>Cash New - Inversión Segura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .menu {
+            display: none;
+            list-style: none;
+            padding: 0;
+        }
+        .menu-toggle {
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .menu.show {
+            display: block;
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input {
+            width: 95%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Pantalla de Inicio de Sesión / Registro -->
-    <div id="auth-container">
-        <img src="login-image.jpg" alt="Inversión Segura">
-        <h2>Bienvenido a Cash New</h2>
-        <input type="email" id="email" placeholder="Correo Electrónico">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button onclick="login()">Iniciar Sesión</button>
-        <p>¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
-    </div><!-- Menú de Navegación -->
-<nav id="menu">
-    <button class="menu-btn">☰</button>
-    <ul class="menu-options">
-        <li onclick="showProfile()">Perfil</li>
-        <li onclick="showDeposits()">Depósitos</li>
-        <li onclick="showWithdrawals()">Retiros</li>
-        <li onclick="showReferrals()">Referidos</li>
-        <li onclick="showTerms()">Términos y Condiciones</li>
+    <div class="container">
+        <img src="https://via.placeholder.com/400x200" alt="Inversión Segura">
+        <h1>Bienvenido a Cash New</h1>
+        <input type="text" placeholder="Correo Electrónico">
+        <input type="password" placeholder="Contraseña">
+        <button>Iniciar Sesión</button>
+        <p>¿No tienes cuenta? <a href="#">Regístrate</a></p>
+    </div><div class="container">
+    <span class="menu-toggle">☰</span>
+    <ul class="menu">
+        <li>Perfil</li>
+        <li>Depósitos</li>
+        <li>Retiros</li>
+        <li>Referidos</li>
+        <li>Términos y Condiciones</li>
     </ul>
-</nav>
-
-<!-- Sección de Perfil -->
-<div id="profile" class="section">
-    <h2>Perfil</h2>
-    <input type="text" id="name" placeholder="Nombre y Apellido">
-    <input type="text" id="age" placeholder="Edad">
-    <input type="text" id="country" placeholder="País">
-    <button onclick="saveProfile()">Guardar</button>
 </div>
 
-<!-- Sección de Depósitos -->
-<div id="deposits" class="section">
-    <h2>Depósitos</h2>
-    <select id="deposit-method" onchange="updateDepositForm()">
-        <option value="ARS">Pesos Argentinos</option>
-        <option value="USDT">USDT</option>
-    </select>
-    <div id="deposit-details"></div>
-    <button onclick="registerDeposit()">Confirmar Depósito</button>
-    <h3>Historial de Depósitos</h3>
-    <table id="deposit-history"></table>
-</div>
-
-<!-- Sección de Retiros -->
-<div id="withdrawals" class="section">
-    <h2>Retiros</h2>
-    <select id="withdraw-method" onchange="updateWithdrawForm()">
-        <option value="ARS">Pesos Argentinos</option>
-        <option value="USDT">USDT</option>
-    </select>
-    <div id="withdraw-details"></div>
-    <button onclick="registerWithdrawal()">Solicitar Retiro</button>
-</div>
-
-<!-- Sección de Referidos -->
-<div id="referrals" class="section">
-    <h2>Programa de Referidos</h2>
-    <p>Comparte tu link de invitación y gana un 5% adicional sobre la inversión de tus referidos.</p>
-    <input type="text" id="referral-link" readonly>
-    <button onclick="copyReferralLink()">Copiar</button>
-</div>
-
-<!-- Sección de Términos y Condiciones -->
-<div id="terms" class="section">
-    <h2>Términos y Condiciones</h2>
-    <p>Aquí se detallan las reglas y normativas de uso de la plataforma.</p>
-</div>
+<script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.menu').classList.toggle('show');
+    });
+</script>
 
 </body>
 </html>
