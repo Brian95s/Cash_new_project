@@ -3,32 +3,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Inversión</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
-        .menu { position: absolute; top: 10px; left: 10px; cursor: pointer; }
-        .menu div { width: 30px; height: 5px; background: black; margin: 6px 0; }
-        .sidebar { display: none; position: fixed; left: 0; top: 0; width: 250px; height: 100%; background: white; padding: 15px; }
-        .history { background: white; padding: 10px; margin-top: 20px; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="menu" onclick="toggleMenu()">
-        <div></div><div></div><div></div>
-    </div>
-    <div class="sidebar" id="sidebar">
-        <p onclick="showSection('perfil')">Perfil</p>
-        <p onclick="showSection('depositos')">Depósitos</p>
-        <p onclick="showSection('retiros')">Retiros</p>
-    </div>
-    <div id="perfil" class="section">Perfil de usuario: <strong>Brian</strong> (Saldo: 500 USDT)</div>
-    <div id="depositos" class="section" style="display:none;">Depósitos aquí...</div>
-    <div id="retiros" class="section" style="display:none;">Retiros aquí...</div>
-    <script>
-        function toggleMenu() { document.getElementById('sidebar').style.display = 'block'; }
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-            document.getElementById(section).style.display = 'block';
-        }
-    </script>
+    <!-- Pantalla de Inicio de Sesión / Registro -->
+    <div id="auth-container">
+        <img src="login-image.jpg" alt="Inversión Segura">
+        <h2>Bienvenido a Cash New</h2>
+        <input type="email" id="email" placeholder="Correo Electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Iniciar Sesión</button>
+        <p>¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
+    </div><!-- Menú de Navegación -->
+<nav id="menu">
+    <button class="menu-btn">☰</button>
+    <ul class="menu-options">
+        <li onclick="showProfile()">Perfil</li>
+        <li onclick="showDeposits()">Depósitos</li>
+        <li onclick="showWithdrawals()">Retiros</li>
+        <li onclick="showReferrals()">Referidos</li>
+        <li onclick="showTerms()">Términos y Condiciones</li>
+    </ul>
+</nav>
+
+<!-- Sección de Perfil -->
+<div id="profile" class="section">
+    <h2>Perfil</h2>
+    <input type="text" id="name" placeholder="Nombre y Apellido">
+    <input type="text" id="age" placeholder="Edad">
+    <input type="text" id="country" placeholder="País">
+    <button onclick="saveProfile()">Guardar</button>
+</div>
+
+<!-- Sección de Depósitos -->
+<div id="deposits" class="section">
+    <h2>Depósitos</h2>
+    <select id="deposit-method" onchange="updateDepositForm()">
+        <option value="ARS">Pesos Argentinos</option>
+        <option value="USDT">USDT</option>
+    </select>
+    <div id="deposit-details"></div>
+    <button onclick="registerDeposit()">Confirmar Depósito</button>
+    <h3>Historial de Depósitos</h3>
+    <table id="deposit-history"></table>
+</div>
+
+<!-- Sección de Retiros -->
+<div id="withdrawals" class="section">
+    <h2>Retiros</h2>
+    <select id="withdraw-method" onchange="updateWithdrawForm()">
+        <option value="ARS">Pesos Argentinos</option>
+        <option value="USDT">USDT</option>
+    </select>
+    <div id="withdraw-details"></div>
+    <button onclick="registerWithdrawal()">Solicitar Retiro</button>
+</div>
+
+<!-- Sección de Referidos -->
+<div id="referrals" class="section">
+    <h2>Programa de Referidos</h2>
+    <p>Comparte tu link de invitación y gana un 5% adicional sobre la inversión de tus referidos.</p>
+    <input type="text" id="referral-link" readonly>
+    <button onclick="copyReferralLink()">Copiar</button>
+</div>
+
+<!-- Sección de Términos y Condiciones -->
+<div id="terms" class="section">
+    <h2>Términos y Condiciones</h2>
+    <p>Aquí se detallan las reglas y normativas de uso de la plataforma.</p>
+</div>
+
 </body>
 </html>
