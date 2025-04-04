@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +23,12 @@
             border-radius: 10px;
             text-align: center;
             width: 300px;
+            position: relative;
+        }
+        .language-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
         input {
             width: 100%;
@@ -62,6 +67,12 @@
 </head>
 <body>
     <div class="container">
+        <select class="language-selector" onchange="changeLanguage(this.value)">
+            <option value="es">🇪🇸 Español</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="pt">🇵🇹 Português</option>
+            <option value="zh">🇨🇳 中文</option>
+        </select>
         <h2 id="form-title">Iniciar Sesión</h2>
         <input type="text" id="username" placeholder="Nombre de usuario">
         <input type="email" id="email" placeholder="Correo electrónico" style="display: none;">
@@ -70,75 +81,37 @@
         <button onclick="authenticate()" id="auth-button">Iniciar Sesión</button>
         <button id="confirm-button" onclick="confirmRegistration()">Confirmar</button>
         <p><a href="#" onclick="toggleForm()" id="toggle-link">¿No tienes cuenta? Regístrate</a></p>
-        <p><a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a></p>
+        <p><a href="#" onclick="showRecovery()">¿Olvidaste tu contraseña?</a></p>
+        <div id="recovery-container" style="display: none;">
+            <input type="email" id="recovery-email" placeholder="Ingresa tu correo">
+            <button onclick="resetPassword()">Recuperar</button>
+        </div>
     </div>
-
     <script>
-        const users = { "Brian95s": "Demian31" };
-        let isRegistering = false;
+        function changeLanguage(lang) {
+            alert("Cambiando idioma a: " + lang);
+        }function toggleForm() {
+        let isRegistering = document.getElementById("email").style.display === "none";
+        document.getElementById("form-title").innerText = isRegistering ? "Registro" : "Iniciar Sesión";
+        document.getElementById("auth-button").innerText = isRegistering ? "Registrarse" : "Iniciar Sesión";
+        document.getElementById("toggle-link").innerText = isRegistering ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate";
+        document.getElementById("email").style.display = isRegistering ? "block" : "none";
+        document.getElementById("confirm-button").style.display = isRegistering ? "block" : "none";
+    }
 
-        function toggleForm() {
-            isRegistering = !isRegistering;
-            document.getElementById("form-title").innerText = isRegistering ? "Registro" : "Iniciar Sesión";
-            document.getElementById("auth-button").innerText = isRegistering ? "Registrarse" : "Iniciar Sesión";
-            document.getElementById("toggle-link").innerText = isRegistering ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate";
-            document.getElementById("username").style.display = "block";
-            document.getElementById("email").style.display = isRegistering ? "block" : "none";
-            document.getElementById("confirm-button").style.display = isRegistering ? "block" : "none";
+    function showRecovery() {
+        document.getElementById("recovery-container").style.display = "block";
+    }
+
+    function resetPassword() {
+        const email = document.getElementById("recovery-email").value;
+        if (!email) {
+            document.getElementById("error-message").innerText = "Ingresa tu correo para recuperar la contraseña";
+            return;
         }
+        alert("Correo de recuperación enviado a " + email);
+    }
+</script>
 
-        function authenticate() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const errorMessage = document.getElementById("error-message");
-
-            if (!username || !password) {
-                errorMessage.innerText = "Completa todos los campos";
-                return;
-            }
-
-            if (!isRegistering) {
-                if (users[username] === password) {
-                    alert("Inicio de sesión exitoso");
-                    window.location.href = "pagina_principal.html";
-                } else {
-                    errorMessage.innerText = "Usuario o contraseña incorrectos";
-                }
-            }
-        }
-
-        function confirmRegistration() {
-            const username = document.getElementById("username").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const errorMessage = document.getElementById("error-message");
-
-            if (!username || !email || !password) {
-                errorMessage.innerText = "Completa todos los campos";
-                return;
-            }
-
-            if (!/^(?=.*[a-zA-Z]{5,})(?=.*\d{2,}).{7,}$/.test(password)) {
-                errorMessage.innerText = "La contraseña debe tener al menos 5 letras y 2 números";
-                return;
-            }
-
-            users[username] = password;
-            alert("Registro exitoso");
-            window.location.href = "pagina_principal.html";
-        }
-
-        function resetPassword() {
-            const email = document.getElementById("email").value;
-            const errorMessage = document.getElementById("error-message");
-
-            if (!email) {
-                errorMessage.innerText = "Ingresa tu correo para recuperar la contraseña";
-                return;
-            }
-
-            alert("Correo de recuperación enviado");
-        }
-    </script>
 </body>
 </html>
