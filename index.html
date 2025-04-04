@@ -3,45 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - ProfitLink</title>
+    <title>ProfitLink - Inicio de Sesión</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffcc00;
-            font-family: Arial, sans-serif;
+            margin: 0;
         }
-        .login-container {
-            background: white;
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
             text-align: center;
-        }
-        .login-container h2 {
-            margin-bottom: 20px;
+            width: 300px;
         }
         input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
+            background-color: #444;
+            color: white;
         }
         button {
             width: 100%;
             padding: 10px;
-            background: green;
-            color: white;
             border: none;
             border-radius: 5px;
+            background-color: #ff7e5f;
+            color: white;
             cursor: pointer;
         }
         button:hover {
-            background: darkgreen;
+            background-color: #e05a3f;
+        }
+        #confirm-button {
+            background-color: green;
+            display: none;
+        }
+        a {
+            color: #feb47b;
+            text-decoration: none;
         }
         .error-message {
             color: red;
@@ -50,14 +61,84 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Iniciar Sesión</h2>
-        <form action="LoginServlet" method="post">
-            <input type="text" name="usuario" placeholder="Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <p class="error-message" id="error-message"></p>
-            <button type="submit">Confirmar</button>
-        </form>
+    <div class="container">
+        <h2 id="form-title">Iniciar Sesión</h2>
+        <input type="text" id="username" placeholder="Nombre de usuario">
+        <input type="email" id="email" placeholder="Correo electrónico" style="display: none;">
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <p class="error-message" id="error-message"></p>
+        <button onclick="authenticate()" id="auth-button">Iniciar Sesión</button>
+        <button id="confirm-button" onclick="confirmRegistration()">Confirmar</button>
+        <p><a href="#" onclick="toggleForm()" id="toggle-link">¿No tienes cuenta? Regístrate</a></p>
+        <p><a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a></p>
     </div>
+
+    <script>
+        const users = { "Brian95s": "Demian31" };
+        let isRegistering = false;
+
+        function toggleForm() {
+            isRegistering = !isRegistering;
+            document.getElementById("form-title").innerText = isRegistering ? "Registro" : "Iniciar Sesión";
+            document.getElementById("auth-button").innerText = isRegistering ? "Registrarse" : "Iniciar Sesión";
+            document.getElementById("toggle-link").innerText = isRegistering ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate";
+            document.getElementById("username").style.display = "block";
+            document.getElementById("email").style.display = isRegistering ? "block" : "none";
+            document.getElementById("confirm-button").style.display = isRegistering ? "block" : "none";
+        }
+
+        function authenticate() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (!username || !password) {
+                errorMessage.innerText = "Completa todos los campos";
+                return;
+            }
+
+            if (!isRegistering) {
+                if (users[username] === password) {
+                    alert("Inicio de sesión exitoso");
+                    window.location.href = "pagina_principal.html";
+                } else {
+                    errorMessage.innerText = "Usuario o contraseña incorrectos";
+                }
+            }
+        }
+
+        function confirmRegistration() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (!username || !email || !password) {
+                errorMessage.innerText = "Completa todos los campos";
+                return;
+            }
+
+            if (!/^(?=.*[a-zA-Z]{5,})(?=.*\d{2,}).{7,}$/.test(password)) {
+                errorMessage.innerText = "La contraseña debe tener al menos 5 letras y 2 números";
+                return;
+            }
+
+            users[username] = password;
+            alert("Registro exitoso");
+            window.location.href = "pagina_principal.html";
+        }
+
+        function resetPassword() {
+            const email = document.getElementById("email").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (!email) {
+                errorMessage.innerText = "Ingresa tu correo para recuperar la contraseña";
+                return;
+            }
+
+            alert("Correo de recuperación enviado");
+        }
+    </script>
 </body>
 </html>
