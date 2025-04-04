@@ -23,12 +23,6 @@
             border-radius: 10px;
             text-align: center;
             width: 300px;
-            position: relative;
-        }
-        .language-selector {
-            position: absolute;
-            top: 10px;
-            right: 10px;
         }
         input {
             width: 100%;
@@ -67,49 +61,52 @@
 </head>
 <body>
     <div class="container">
-        <select class="language-selector" onchange="changeLanguage(this.value)">
-            <option value="es">🇪🇸 Español</option>
-            <option value="en">🇺🇸 English</option>
-            <option value="pt">🇵🇹 Português</option>
-            <option value="zh">🇨🇳 中文</option>
+        <select id="language" onchange="changeLanguage()">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="zh">中文</option>
         </select>
         <h2 id="form-title">Iniciar Sesión</h2>
         <input type="text" id="username" placeholder="Nombre de usuario">
-        <input type="email" id="email" placeholder="Correo electrónico" style="display: none;">
         <input type="password" id="password" placeholder="Contraseña" required>
         <p class="error-message" id="error-message"></p>
         <button onclick="authenticate()" id="auth-button">Iniciar Sesión</button>
-        <button id="confirm-button" onclick="confirmRegistration()">Confirmar</button>
         <p><a href="#" onclick="toggleForm()" id="toggle-link">¿No tienes cuenta? Regístrate</a></p>
-        <p><a href="#" onclick="showRecovery()">¿Olvidaste tu contraseña?</a></p>
-        <div id="recovery-container" style="display: none;">
-            <input type="email" id="recovery-email" placeholder="Ingresa tu correo">
-            <button onclick="resetPassword()">Recuperar</button>
-        </div>
-    </div>
-    <script>
-        function changeLanguage(lang) {
-            alert("Cambiando idioma a: " + lang);
-        }function toggleForm() {
-        let isRegistering = document.getElementById("email").style.display === "none";
-        document.getElementById("form-title").innerText = isRegistering ? "Registro" : "Iniciar Sesión";
-        document.getElementById("auth-button").innerText = isRegistering ? "Registrarse" : "Iniciar Sesión";
-        document.getElementById("toggle-link").innerText = isRegistering ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate";
-        document.getElementById("email").style.display = isRegistering ? "block" : "none";
-        document.getElementById("confirm-button").style.display = isRegistering ? "block" : "none";
+        <p><a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a></p>
+    </div><script>
+    const translations = {
+        es: { title: "Iniciar Sesión", username: "Nombre de usuario", password: "Contraseña", login: "Iniciar Sesión", register: "¿No tienes cuenta? Regístrate", forgot: "¿Olvidaste tu contraseña?" },
+        en: { title: "Login", username: "Username", password: "Password", login: "Login", register: "Don't have an account? Sign up", forgot: "Forgot your password?" },
+        pt: { title: "Entrar", username: "Nome de usuário", password: "Senha", login: "Entrar", register: "Não tem uma conta? Cadastre-se", forgot: "Esqueceu sua senha?" },
+        zh: { title: "登录", username: "用户名", password: "密码", login: "登录", register: "没有账户？注册", forgot: "忘记密码？" }
+    };
+    
+    function changeLanguage() {
+        let lang = document.getElementById("language").value;
+        document.getElementById("form-title").innerText = translations[lang].title;
+        document.getElementById("username").placeholder = translations[lang].username;
+        document.getElementById("password").placeholder = translations[lang].password;
+        document.getElementById("auth-button").innerText = translations[lang].login;
+        document.getElementById("toggle-link").innerText = translations[lang].register;
     }
 
-    function showRecovery() {
-        document.getElementById("recovery-container").style.display = "block";
-    }
+    function authenticate() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("error-message");
 
-    function resetPassword() {
-        const email = document.getElementById("recovery-email").value;
-        if (!email) {
-            document.getElementById("error-message").innerText = "Ingresa tu correo para recuperar la contraseña";
+        if (!username || !password) {
+            errorMessage.innerText = "Completa todos los campos";
             return;
         }
-        alert("Correo de recuperación enviado a " + email);
+
+        if (username === "Brian95s" && password === "Demian31") {
+            alert("Inicio de sesión exitoso");
+            window.location.href = "pagina_principal.html";
+        } else {
+            errorMessage.innerText = "Usuario o contraseña incorrectos";
+        }
     }
 </script>
 
