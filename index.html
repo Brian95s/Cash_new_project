@@ -1,114 +1,215 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProfitLink - Inicio de Sesión</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            width: 300px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: #444;
-            color: white;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff7e5f;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e05a3f;
-        }
-        #confirm-button {
-            background-color: green;
-            display: none;
-        }
-        a {
-            color: #feb47b;
-            text-decoration: none;
-        }
-        .error-message {
-            color: red;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProfitLink - Inicio de Sesión</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: linear-gradient(to right, #ff7e5f, #feb47b);
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+      position: relative;
+    }
+    .language-selector {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: white;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff7e5f;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e05a3f;
+    }
+    #confirm-button {
+      background-color: green;
+      display: none;
+    }
+    a {
+      color: #feb47b;
+      text-decoration: none;
+    }
+    .error-message {
+      color: red;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <select id="language" onchange="changeLanguage()">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-            <option value="pt">Português</option>
-            <option value="zh">中文</option>
-        </select>
-        <h2 id="form-title">Iniciar Sesión</h2>
-        <input type="text" id="username" placeholder="Nombre de usuario">
-        <input type="password" id="password" placeholder="Contraseña" required>
-        <p class="error-message" id="error-message"></p>
-        <button onclick="authenticate()" id="auth-button">Iniciar Sesión</button>
-        <p><a href="#" onclick="toggleForm()" id="toggle-link">¿No tienes cuenta? Regístrate</a></p>
-        <p><a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a></p>
-    </div><script>
+  <div class="container">
+    <select class="language-selector" onchange="changeLanguage(this.value)">
+      <option value="es">🇪🇸 Español</option>
+      <option value="en">🇺🇸 English</option>
+      <option value="pt">🇵🇹 Português</option>
+      <option value="zh">🇨🇳 中文</option>
+    </select>
+    <h2 id="form-title">Iniciar Sesión</h2>
+    <input type="text" id="username" placeholder="Nombre de usuario" />
+    <input type="email" id="email" placeholder="Correo electrónico" style="display: none;" />
+    <input type="password" id="password" placeholder="Contraseña" required />
+    <p class="error-message" id="error-message"></p>
+    <button onclick="authenticate()" id="auth-button">Iniciar Sesión</button>
+    <button id="confirm-button" onclick="confirmRegistration()">Confirmar</button>
+    <p><a href="#" onclick="toggleForm()" id="toggle-link">¿No tienes cuenta? Regístrate</a></p>
+    <p><a href="#" onclick="showRecovery()" id="forgot-link">¿Olvidaste tu contraseña?</a></p>
+    <div id="recovery-container" style="display: none;">
+      <input type="email" id="recovery-email" placeholder="Ingresa tu correo" />
+      <button onclick="resetPassword()" id="recovery-button">Recuperar</button>
+    </div>
+  </div>
+
+  <script>
+    let isRegistering = false;
+    let currentLang = "es";
+
     const translations = {
-        es: { title: "Iniciar Sesión", username: "Nombre de usuario", password: "Contraseña", login: "Iniciar Sesión", register: "¿No tienes cuenta? Regístrate", forgot: "¿Olvidaste tu contraseña?" },
-        en: { title: "Login", username: "Username", password: "Password", login: "Login", register: "Don't have an account? Sign up", forgot: "Forgot your password?" },
-        pt: { title: "Entrar", username: "Nome de usuário", password: "Senha", login: "Entrar", register: "Não tem uma conta? Cadastre-se", forgot: "Esqueceu sua senha?" },
-        zh: { title: "登录", username: "用户名", password: "密码", login: "登录", register: "没有账户？注册", forgot: "忘记密码？" }
+      es: {
+        title: "Iniciar Sesión",
+        username: "Nombre de usuario",
+        email: "Correo electrónico",
+        password: "Contraseña",
+        login: "Iniciar Sesión",
+        register: "Registrarse",
+        toggleToRegister: "¿No tienes cuenta? Regístrate",
+        toggleToLogin: "¿Ya tienes cuenta? Inicia sesión",
+        confirm: "Confirmar",
+        forgotPassword: "¿Olvidaste tu contraseña?",
+        recoveryPlaceholder: "Ingresa tu correo",
+        recover: "Recuperar",
+        recoverySuccess: "Correo de recuperación enviado a",
+        emptyRecovery: "Ingresa tu correo para recuperar la contraseña"
+      },
+      en: {
+        title: "Login",
+        username: "Username",
+        email: "Email",
+        password: "Password",
+        login: "Login",
+        register: "Register",
+        toggleToRegister: "Don't have an account? Sign up",
+        toggleToLogin: "Already have an account? Login",
+        confirm: "Confirm",
+        forgotPassword: "Forgot your password?",
+        recoveryPlaceholder: "Enter your email",
+        recover: "Recover",
+        recoverySuccess: "Recovery email sent to",
+        emptyRecovery: "Please enter your email to recover password"
+      },
+      pt: {
+        title: "Entrar",
+        username: "Nome de usuário",
+        email: "Email",
+        password: "Senha",
+        login: "Entrar",
+        register: "Registrar",
+        toggleToRegister: "Não tem conta? Registre-se",
+        toggleToLogin: "Já tem uma conta? Entrar",
+        confirm: "Confirmar",
+        forgotPassword: "Esqueceu sua senha?",
+        recoveryPlaceholder: "Digite seu email",
+        recover: "Recuperar",
+        recoverySuccess: "Email de recuperação enviado para",
+        emptyRecovery: "Digite seu email para recuperar a senha"
+      },
+      zh: {
+        title: "登录",
+        username: "用户名",
+        email: "电子邮件",
+        password: "密码",
+        login: "登录",
+        register: "注册",
+        toggleToRegister: "没有账户？注册",
+        toggleToLogin: "已有账户？登录",
+        confirm: "确认",
+        forgotPassword: "忘记密码？",
+        recoveryPlaceholder: "输入你的电子邮箱",
+        recover: "恢复",
+        recoverySuccess: "已发送恢复邮件至",
+        emptyRecovery: "请输入您的电子邮箱以恢复密码"
+      }
     };
-    
-    function changeLanguage() {
-        let lang = document.getElementById("language").value;
-        document.getElementById("form-title").innerText = translations[lang].title;
-        document.getElementById("username").placeholder = translations[lang].username;
-        document.getElementById("password").placeholder = translations[lang].password;
-        document.getElementById("auth-button").innerText = translations[lang].login;
-        document.getElementById("toggle-link").innerText = translations[lang].register;
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+
+      document.getElementById("form-title").innerText = isRegistering ? t.register : t.title;
+      document.getElementById("username").placeholder = t.username;
+      document.getElementById("email").placeholder = t.email;
+      document.getElementById("password").placeholder = t.password;
+      document.getElementById("auth-button").innerText = isRegistering ? t.register : t.login;
+      document.getElementById("confirm-button").innerText = t.confirm;
+      document.getElementById("toggle-link").innerText = isRegistering ? t.toggleToLogin : t.toggleToRegister;
+      document.getElementById("recovery-email").placeholder = t.recoveryPlaceholder;
+      document.getElementById("recovery-button").innerText = t.recover;
+      document.getElementById("forgot-link").innerText = t.forgotPassword;
+    }
+
+    function toggleForm() {
+      isRegistering = !isRegistering;
+      changeLanguage(currentLang);
+      document.getElementById("email").style.display = isRegistering ? "block" : "none";
+      document.getElementById("confirm-button").style.display = isRegistering ? "block" : "none";
+      document.getElementById("recovery-container").style.display = "none";
+    }
+
+    function showRecovery() {
+      document.getElementById("recovery-container").style.display = "block";
+    }
+
+    function resetPassword() {
+      const email = document.getElementById("recovery-email").value;
+      const t = translations[currentLang];
+      if (!email) {
+        document.getElementById("error-message").innerText = t.emptyRecovery;
+        return;
+      }
+      document.getElementById("error-message").innerText = "";
+      alert(`${t.recoverySuccess} ${email}`);
     }
 
     function authenticate() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const errorMessage = document.getElementById("error-message");
-
-        if (!username || !password) {
-            errorMessage.innerText = "Completa todos los campos";
-            return;
-        }
-
-        if (username === "Brian95s" && password === "Demian31") {
-            alert("Inicio de sesión exitoso");
-            window.location.href = "pagina_principal.html";
-        } else {
-            errorMessage.innerText = "Usuario o contraseña incorrectos";
-        }
+      alert(isRegistering ? "Registro simulado (Firebase pendiente)" : "Inicio de sesión simulado");
+      window.location.href = "pantalla_principal.html";
     }
-</script>
 
+    function confirmRegistration() {
+      alert("Éxito");
+    }
+
+    // Inicializar idioma por defecto
+    window.onload = () => changeLanguage("es");
+  </script>
 </body>
 </html>
